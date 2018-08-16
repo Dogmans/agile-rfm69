@@ -1,0 +1,5 @@
+RPi.GPIO==0.6.3
+spidev==3.2
+https://github.com/Dogmans/RFM69/archive/master.zip
+Twisted==18.7.0
+txdbus==1.1.0
