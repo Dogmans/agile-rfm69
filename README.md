@@ -1,8 +1,8 @@
 # agile-rfm69
-RFM69 protocol implementation for the AGILE gateway.
+RFM69 protocol implementation for the <a href="https://github.com/Agile-IoT"> AGILE gateway </a>.
 
 Work-in-progress to enable use of RFM69 on Raspberry Pi-based hardware
 
-https://github.com/Agile-IoT
+Modulation settings taken from <a href="https://github.com/PaulStoffregen/RadioHead"> RadioHead <a> libraries.
 
-Further changes due to ensure GPL-ed (RFM69) components are removed.
+Further changes required to ensure GPL-ed components (RFM69) are removed.
