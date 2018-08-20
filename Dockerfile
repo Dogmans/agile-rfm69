@@ -26,8 +26,6 @@ COPY requirements.txt requirements.txt
 RUN pip install wheel
 RUN python -m pip install -r requirements.txt
 
-COPY mocks mocks
-COPY tests tests
 COPY *.py ./
 
 CMD ["python", "./run_server.py"]
