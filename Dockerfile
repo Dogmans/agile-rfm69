@@ -8,12 +8,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	python-pip \
 	curl \
 	libglib2.0-dev \
-	libgirepository1.0-dev \
-	python-numpy \
-	python-gi \
-	python-gi-cairo \
-	python3-gi \
-	python3-gi-cairo \
 	gir1.2-gtk-3.0 \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 	
