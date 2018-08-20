@@ -180,9 +180,10 @@ class Rfm69DBusService(objects.DBusObject):
 		(data, rssi) = self._rfm69.wait_for_packet()
 		
 		if data:
+			# RadioHead sends the following headers: To, From, Id, Flags, Data...
 			self._logger.debug("{}@Receive: receiveDone()".format(self._full_path))
 			result["SENDERID"] = data[1]
-			result["DATA"] = data[1:] # includes self address so change later
+			result["DATA"] = data[4:]
 			result["RSSI"] = rssi
 		
 		return result
