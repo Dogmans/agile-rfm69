@@ -59,7 +59,7 @@ class Rfm69DBusService(objects.DBusObject):
 		settings = MODEM_CONFIG_TABLE[self._setup["MODEM_CONFIG"]]
 		addresses = [0x02, 0x03, 0x04, 0x05, 0x06, 0x19, 0x1a, 0x37]
 		for value, address in zip(settings, addresses):
-			self.rfm69.spi_write(address, value)
+			self._rfm69.spi_write(address, value)
 			
 	def _setModemKey(self):
 		self._logger.debug("enabling ecryption")
