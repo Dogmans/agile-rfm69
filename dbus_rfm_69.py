@@ -84,7 +84,7 @@ class Rfm69DBusService(objects.DBusObject):
 		
 		self._logger.debug(
 			"{}@Connect: MODE={}".format(self._full_path, self._setup["MODEM_CONFIG"]))
-		self._rfm69 = rfm69.RFM69(25, 24, 0, config, True)
+		self._rfm69 = rfm69.RFM69(25, 24, 0, rfm69.RFM69Configuration(), True)
 		self._rfm69.set_channel(self._setup["channel"])
 		self._rfm69.set_address(1)
 		
