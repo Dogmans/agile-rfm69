@@ -9,8 +9,8 @@ from txdbus import client, objects, error
 from txdbus.interface import DBusInterface, Method
 
 from config import *
-from RFM69 import RFM69
-from RFM69.RFM69registers import *
+import rfm69
+from rfm69.constants import RF
 	
 class Rfm69DBusService(objects.DBusObject):
 	
@@ -59,11 +59,11 @@ class Rfm69DBusService(objects.DBusObject):
 		settings = MODEM_CONFIG_TABLE[self._setup["MODEM_CONFIG"]]
 		addresses = [0x02, 0x03, 0x04, 0x05, 0x06, 0x19, 0x1a, 0x37]
 		for value, address in zip(settings, addresses):
-			self._rfm69.writeReg(address, value)
+			self.rfm69.spi_write(address, value)
 			
 	def _setModemKey(self):
 		self._logger.debug("enabling ecryption")
-		self._rfm69.encrypt(self._setup["key"])
+		self._rfm69.set_encryption(self._setup["key"])
 		
 	def _getConnected(self):
 		return self._connected
@@ -84,23 +84,22 @@ class Rfm69DBusService(objects.DBusObject):
 		
 		self._logger.debug(
 			"{}@Connect: MODE={}".format(self._full_path, self._setup["MODEM_CONFIG"]))
-		self._rfm69 = RFM69.RFM69(RF69_868MHZ, 1, self._setup["channel"], True, 18, 22) # TODO - make configurable if continuing with this interface
+		self._rfm69 = rfm69.RFM69(25, 24, 0, config, True)
+		self._rfm69.set_channel(self._setup["channel"])
+		self._rfm69.set_address(1)
 		
-		self._logger.debug("class initialized")
-		self._logger.debug("Performing rcCalibration")
-		self._rfm69.rcCalibration()
-		self._logger.debug("setting high power")
-		self._rfm69.setHighPower(True)
+		self._logger.debug("Class initialized")
+		self._logger.debug("Calibrating RSSI")
+		self._rfm69.calibrate_rssi_threshold()
 		self._logger.debug("Checking temperature")
-		self._logger.debug(self._rfm69.readTemperature(0))
+		self._logger.debug(self._rfm69.read_temperature())
 		
 		# Make sure settings are correct to talk to other radios
 		self._setModemConfig()
 		self._setModemKey()
 		
 		self._logger.debug("reading all registers")
-		results = self._rfm69.readAllRegs()
-		for result in results:
+		for result in self._rfm69.read_registers():
 			self._logger.debug(result)
 		
 		# Won't get here if something went wrong reading temps etc.
@@ -119,7 +118,7 @@ class Rfm69DBusService(objects.DBusObject):
 			raise self.IOError("Module is already disconnected.")
 		
 		self._setConnected(False)
-		self._rfm69.shutdown()
+		self._rfm69.disconnect()
 		self._logger.debug("{}@Disconnect: Disconnect OK".format(self._full_path)) 
 
 	def dbus_Setup(self, args):
@@ -168,7 +167,7 @@ class Rfm69DBusService(objects.DBusObject):
 		
 		# Turn it back into bytes again, since D-Bus turns it into a list
 		sendData = struct.pack("B"*len(sendData), *sendData)
-		self._rfm69.send(sendId, sendData)
+		self._rfm69.send_packet(sendData, target=sendId)
 	
 	def dbus_Receive(self):
 		self._logger.debug("{}@Receive: Receive INIT".format(self._full_path))
@@ -176,21 +175,15 @@ class Rfm69DBusService(objects.DBusObject):
 			self._logger.debug(
 				"{}@Receive: Module is not connected".format(self._full_path))
 			raise self.IOError("Module is not connected.")
+		
 		result = {}
+		(data, rssi) = self._rfm69.wait_for_packet()
 		
-		self._rfm69.receiveBegin()
-		
-		# Listen for comms from bricks
-		totalWait = 0
-		while not self._rfm69.receiveDone() and totalWait < RECEIVE_TIMEOUT:
-			time.sleep(.05)
-			totalWait += .05
-		
-		if totalWait < RECEIVE_TIMEOUT:
+		if data:
 			self._logger.debug("{}@Receive: receiveDone()".format(self._full_path))
-			result["SENDERID"] = self._rfm69.SENDERID
-			result["DATA"] = bytearray(self._rfm69.DATA)
-			result["RSSI"] = self._rfm69.RSSI
+			result["SENDERID"] = data[1]
+			result["DATA"] = data[1:] # includes self address so change later
+			result["RSSI"] = rssi
 		
 		return result
 	
