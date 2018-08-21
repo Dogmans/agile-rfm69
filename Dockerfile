@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	curl \
 	libglib2.0-dev \
 	libgirepository1.0-dev \
-	python-numpy \
 	python-gi \
 	python-gi-cairo \
 	python3-gi \
