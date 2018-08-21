@@ -152,13 +152,12 @@ class Rfm69DBusService(objects.DBusObject):
 				"{}@Send: Module is not connected".format(self._full_path))
 			raise self.IOError("Module is not connected.")
 		
-		sendId = args.pop("ID", "")
 		sendData = args.pop("DATA", "")
 		
-		if not sendData or not sendId:
+		if not sendData:
 			self._logger.debug(
-				"{}@Send/Rfm69: No data or Id provided".format(self._full_path))
-			raise self.ValueError("You must provide the data and Id.")
+				"{}@Send/Rfm69: No data provided".format(self._full_path))
+			raise self.ValueError("You must provide the data.")
 		
 		if not type(sendData) is list:
 			self._logger.debug(
@@ -167,7 +166,7 @@ class Rfm69DBusService(objects.DBusObject):
 		
 		# Turn it back into bytes again, since D-Bus turns it into a list
 		sendData = struct.pack("B"*len(sendData), *sendData)
-		self._rfm69.send_packet(sendData, target=sendId)
+		self._rfm69.send_packet(sendData)
 	
 	def dbus_Receive(self):
 		self._logger.debug("{}@Receive: Receive INIT".format(self._full_path))
@@ -180,10 +179,8 @@ class Rfm69DBusService(objects.DBusObject):
 		(data, rssi) = self._rfm69.wait_for_packet()
 		
 		if data:
-			# RadioHead sends the following headers: To, From, Id, Flags, Data...
 			self._logger.debug("{}@Receive: receiveDone()".format(self._full_path))
-			result["SENDERID"] = data[1]
-			result["DATA"] = data[4:]
+			result["DATA"] = data
 			result["RSSI"] = rssi
 		
 		return result
