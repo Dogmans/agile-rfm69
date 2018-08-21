@@ -90,7 +90,7 @@ class Rfm69DBusService(objects.DBusObject):
 		
 		self._logger.debug("Class initialized")
 		self._logger.debug("Calibrating RSSI")
-		self._rfm69.calibrate_rssi_threshold()
+		# self._rfm69.calibrate_rssi_threshold()
 		self._logger.debug("Checking temperature")
 		self._logger.debug(self._rfm69.read_temperature())
 		
