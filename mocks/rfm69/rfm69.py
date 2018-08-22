@@ -40,7 +40,8 @@ class RFM69(object):
         self.log.info("Initialised successfully")
 
     def wait_for_packet(self, timeout=None):
-        return None
+        # sleep(5)
+        return (bytearray([1, 3, 0, 0, 9, 0, 0, 0, 0, 0, 0, 86, 241, 2, 0, 15, 161]), -30)
 
     def send_packet(self, data, preamble=None):
         pass
@@ -83,4 +84,7 @@ class RFM69(object):
             yield 0
 
     def disconnect(self):
+        pass
+
+    def spi_write(self, address, value):
         pass
