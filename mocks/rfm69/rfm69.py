@@ -44,7 +44,9 @@ class RFM69(object):
         return (bytearray([1, 3, 0, 0, 9, 0, 0, 0, 0, 0, 0, 86, 241, 2, 0, 15, 161]), -30)
 
     def send_packet(self, data, preamble=None):
-        pass
+	data = list(bytearray(data))
+	self.log.info(type(data))
+	self.log.info(data)
 
     def set_mode(self, mode, wait=True):
         pass
