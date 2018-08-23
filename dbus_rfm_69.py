@@ -76,14 +76,14 @@ class Rfm69DBusService(objects.DBusObject):
 	
 	def dbus_Connect(self):
 		self._logger.debug(
-			"{}@Connect: Connect INIT".format(self._full_path))
+			"%s@Connect: Connect INIT", self._full_path)
 		if self._getConnected():
 			self._logger.debug(
-				"{}@Connect: Module is already connected".format(self._full_path))
+				"%s@Connect: Module is already connected", self._full_path)
 			raise self.IOError("Module is already connected.")
 		
 		self._logger.debug(
-			"{}@Connect: MODE={}".format(self._full_path, self._setup["MODEM_CONFIG"]))
+			"%s@Connect: MODE=%s", self._full_path, self._setup["MODEM_CONFIG"])
 		self._rfm69 = rfm69.RFM69(25, 24, 0, rfm69.RFM69Configuration(), True)
 		self._rfm69.set_channel(self._setup["channel"])
 		self._rfm69.set_address(1)
@@ -104,25 +104,25 @@ class Rfm69DBusService(objects.DBusObject):
 		
 		# Won't get here if something went wrong reading temps etc.
 		self._setConnected(True)
-		self._logger.debug("{}@Connect: Connect OK".format(self._full_path))
+		self._logger.debug("%s@Connect: Connect OK", self._full_path)
 		
 	def dbus_Connected(self):
 		return self._connected
 
 	def dbus_Disconnect(self):
 		self._logger.debug(
-			"{}@Disconnect: Disconnect INIT".format(self._full_path))
+			"%s@Disconnect: Disconnect INIT", self._full_path)
 		if not self._getConnected():
 			self._logger.debug(
-				"{}@Disconnect: Module is already disconnected".format(self._full_path))
+				"%s@Disconnect: Module is already disconnected", self._full_path)
 			raise self.IOError("Module is already disconnected.")
 		
 		self._setConnected(False)
 		self._rfm69.disconnect()
-		self._logger.debug("{}@Disconnect: Disconnect OK".format(self._full_path)) 
+		self._logger.debug("%s@Disconnect: Disconnect OK", self._full_path) 
 
 	def dbus_Setup(self, args):
-		self._logger.debug("{}@Setup: Setup INIT".format(self._full_path))
+		self._logger.debug("%s@Setup: Setup INIT", self._full_path)
 		self._setup.clear()
 		self._setup = {}
 		
@@ -139,29 +139,29 @@ class Rfm69DBusService(objects.DBusObject):
 		self._setup["channel"] = channel
 		
 		self._logger.debug(
-			"{}@Setup: Parameters={}".format(self._full_path, self._setup))
+			"%s@Setup: Parameters=%s", self._full_path, self._setup)
 		self._logger.debug(
-			"{}@Setup: Setup OK".format(self._full_path, self._setup))
+			"%s@Setup: Setup OK", self._full_path, self._setup)
 
 	def dbus_Send(self, args):
 		self._logger.debug(
-			"{}@Send: Send INIT".format(self._full_path))
+			"%s@Send: Send INIT", self._full_path)
 		
 		if not self._getConnected():
 			self._logger.debug(
-				"{}@Send: Module is not connected".format(self._full_path))
+				"%s@Send: Module is not connected", self._full_path)
 			raise self.IOError("Module is not connected.")
 		
 		sendData = args.pop("DATA", "")
 		
 		if not sendData:
 			self._logger.debug(
-				"{}@Send/Rfm69: No data provided".format(self._full_path))
+				"%s@Send/Rfm69: No data provided", self._full_path)
 			raise self.ValueError("You must provide the data.")
 		
 		if not type(sendData) is list:
 			self._logger.debug(
-				"{}@Send/Rfm69: Data in wrong format".format(self._full_path))
+				"%s@Send/Rfm69: Data in wrong format", self._full_path)
 			raise self.TypeError("You must provide the data as a list of values.")
 		
 		# Turn it back into bytes again, since D-Bus turns it into a list
@@ -169,17 +169,18 @@ class Rfm69DBusService(objects.DBusObject):
 		self._rfm69.send_packet(sendData)
 	
 	def dbus_Receive(self):
-		self._logger.debug("{}@Receive: Receive INIT".format(self._full_path))
+		self._logger.debug("%s@Receive: Receive INIT", self._full_path)
 		if not self._getConnected():
 			self._logger.debug(
-				"{}@Receive: Module is not connected".format(self._full_path))
+				"%s@Receive: Module is not connected", self._full_path)
 			raise self.IOError("Module is not connected.")
 		
 		result = {}
+		# TODO - fix this
 		(data, rssi) = self._rfm69.wait_for_packet()
 		
 		if data:
-			self._logger.debug("{}@Receive: receiveDone()".format(self._full_path))
+			self._logger.debug("%s@Receive: receiveDone()", self._full_path)
 			result["DATA"] = data
 			result["RSSI"] = rssi
 		
