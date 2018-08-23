@@ -144,7 +144,7 @@ class Rfm69DBusService(objects.DBusObject):
 		self._logger.debug(
 			"%s@Setup: Parameters=%s", self._full_path, self._setup)
 		self._logger.debug(
-			"%s@Setup: Setup OK", self._full_path, self._setup)
+			"%s@Setup: Setup OK", self._full_path)
 
 	def dbus_Send(self, args):
 		self._logger.debug(
