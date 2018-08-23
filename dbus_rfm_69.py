@@ -26,6 +26,9 @@ class Rfm69DBusService(objects.DBusObject):
 	class TypeError(Exception):
 		dbusErrorName = "org.agile-rfm69.TypeError"
 	
+	class TimeoutError(Exception):
+		dbusErrorName = "org.agile-rfm69.TimeoutError"
+	
 	iface = DBusInterface("iot.agile.Protocol",
 					Method("Connect"),
 					Method("Connected", returns="b"),
@@ -175,16 +178,13 @@ class Rfm69DBusService(objects.DBusObject):
 				"%s@Receive: Module is not connected", self._full_path)
 			raise self.IOError("Module is not connected.")
 		
-		result = {}
-		# TODO - fix this
-		(data, rssi) = self._rfm69.wait_for_packet()
-		
-		if data:
+		response = self._rfm69.wait_for_packet()
+		if response:
+			(data, rssi) = response
 			self._logger.debug("%s@Receive: receiveDone()", self._full_path)
-			result["DATA"] = data
-			result["RSSI"] = rssi
+			return {"DATA": data, "RSSI": rssi}
 		
-		return result
+		raise self.TimeoutError("Receive timed out")
 	
 	def dbus_Name(self):
 		return PROTOCOL_NAME
