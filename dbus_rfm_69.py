@@ -179,9 +179,9 @@ class Rfm69DBusService(objects.DBusObject):
 		if response:
 			(data, rssi) = response
 			self._logger.debug("%s@Receive: receiveDone()", self._full_path)
-			return {"DATA": data, "RSSI": rssi}
+			return {"DATA": data, "RSSI": rssi, "STATUS": "OK"}
 		else:
-			return None
+			return {"STATUS": "TIMEOUT"}
 	
 	def dbus_Name(self):
 		return PROTOCOL_NAME
