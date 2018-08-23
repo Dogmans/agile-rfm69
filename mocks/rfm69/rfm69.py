@@ -41,7 +41,7 @@ class RFM69(object):
 
     def wait_for_packet(self, timeout=None):
         # sleep(5)
-        return (bytearray([1, 3, 0, 0, 9, 0, 0, 0, 0, 0, 0, 86, 241, 2, 0, 15, 161]), -30)
+        return (bytearray([1, 2, 0, 0, 38, 8, 51, 0, 0, 142, 0, 85, 176, 0, 139, 15, 160]), -30)
 
     def send_packet(self, data, preamble=None):
         data = list(bytearray(data))
