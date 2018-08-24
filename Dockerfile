@@ -1,5 +1,5 @@
-ARG IMAGE_VERSION=resin/armv7hf-debian:stretch
-FROM ${IMAGE_VERSION} 
+ARG BASEIMAGE_BUILD=resin/armv7hf-debian:stretch
+FROM ${BASEIMAGE_BUILD} 
 
 # Install dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
