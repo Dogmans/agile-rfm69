@@ -4,5 +4,5 @@ RFM69 protocol implementation for the <a href="https://github.com/Agile-IoT"> AG
 Work-in-progress to enable use of RFM69 on Raspberry Pi-based hardware.
 
 Modulation settings taken from <a href="https://github.com/PaulStoffregen/RadioHead"> RadioHead <a> libraries.
-
-Further changes required to ensure GPL-ed components (RFM69) are removed.
+  
+See requirements.txt for Python dependencies
