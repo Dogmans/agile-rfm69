@@ -1,3 +1,5 @@
+# Development has now moved to the following repo: https://github.com/Agile-IoT/agile-rfm69
+
 # agile-rfm69
 RFM69 protocol implementation for the <a href="https://github.com/Agile-IoT"> AGILE gateway</a>.
 
